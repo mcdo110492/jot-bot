@@ -8,13 +8,15 @@ use App\Http\Requests\MarriageRequest;
 
 class MarriageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
 
-    public function index(Request $request, Marriage $marriage)
+    public function __construct(Marriage $marriage) {
+        
+
+        $this->marriage = $marriage;
+        
+    }
+
+    public function index(Request $request)
     {
         
 
@@ -27,86 +29,40 @@ class MarriageController extends Controller
 
         $count = Marriage::count();
 
-        $data = $marriage->queryMarriage($limit,$limitPage,$offset,$field,$filter,$order);
+        $data = $this->marriage->queryMarriage($limit,$limitPage,$offset,$field,$filter,$order);
+
+       
 
         return response()->json(compact('count','data'),200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
 
-        return response()->json([ 'status' => 404,'message' => 'Page Not Found.'], 404);
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(MarriageRequest $request, Marriage $marriage)
+    public function store(MarriageRequest $request)
     {
 
-        $marriage->addMarriage($request);
+        $this->marriage->addMarriage($request);
         
         return response()->json([ 'status' => 200,'message' => 'Data Creation Success'], 200);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Baptism  $baptism
-     * @return \Illuminate\Http\Response
-     */
+
     public function show($id)
     {
-        $data    = [Marriage::with(['minister','wife','husband'])->find($id)];
+        $data    = $this->marriage->getMarriage($id);
 
-        return response()->json([ 'data' => $data], 200);
+        return response()->json($data, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Baptism  $baptism
-     * @return \Illuminate\Http\Response
-     */
-    public function edit()
+   
+
+    public function update(MarriageRequest $request, $id)
     {
-        //
+        $this->marriage->updateMarriage($request);
 
-       return response()->json([ 'status' => 404,'message' => 'Page Not Found.'], 404);
+        return response()->json(['status' => 200, 'message' => 'Data Update Success']);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Baptism  $baptism
-     * @return \Illuminate\Http\Response
-     */
-    public function update(MarriageRequest $request, Marriage $marriage)
-    {
-        $marriage->updateMarriage($request);
 
-        return response()->json(['status' => 200]);
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Baptism  $baptism
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy()
-    {
-        //
-        return response()->json([ 'status' => 404,'message' => 'Page Not Found.'], 404);
-    }
 }

@@ -75,7 +75,23 @@ class Marriage extends Model
 
   		return $query;
 
-  	}
+    }
+
+
+    public function getMarriage($marriage_id){
+
+        $query 		= DB::table('tblmarriages as tm')
+        ->leftJoin('tblministers as m','m.minister_id','=','tm.minister_id')
+        ->leftJoin('tblhusbands as h','h.husband_id','=','tm.husband_id')
+        ->leftJoin('tblwifes as w','w.wife_id','=','tm.wife_id')
+        ->where('tm.marriage_id', '=' , $marriage_id)
+        ->get()->first();
+
+
+        return $query;
+    }
+      
+
 
 
     public function setDateMarriedAttribute ($date)

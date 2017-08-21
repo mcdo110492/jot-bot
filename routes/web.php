@@ -17,15 +17,17 @@ Route::post('api/authenticate', 'AuthenticateController@authenticate');
 
 
 
+
+
 Route::group(['prefix' => 'api', 'middleware' => 'jwt.auth'], function()
 {
     Route::get('authenticate','AuthenticateController@checkValidity');
-    
-    Route::resource('minister','MinisterController');
 
-    Route::post('minister/status','MinisterController@changeStatus');
-    
     Route::get('minister/all','MinisterController@all');
+    
+    Route::post('minister/status','MinisterController@changeStatus');
+
+    Route::resource('minister','MinisterController');
 
     Route::resource('priest','PriestController');
     
@@ -36,8 +38,16 @@ Route::group(['prefix' => 'api', 'middleware' => 'jwt.auth'], function()
     Route::resource('confirmation','ConfirmationController');
 
     Route::resource('death','DeathController');
+    
 
-    Route::resource('marriage','MarriageController');
+    Route::get('marriage','MarriageController@index');
+
+    Route::get('marriage/{id}','MarriageController@show');
+
+    Route::post('marriage','MarriageController@store');
+
+    Route::put('marriage/{id}','MarriageController@update');
+
 
     Route::resource('price/category','PriceCategoryController');
 
