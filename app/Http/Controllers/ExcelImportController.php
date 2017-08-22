@@ -17,10 +17,10 @@ class ExcelImportController extends Controller
 
     {
 
-       if (request()->hasFile('userfile')) 
+       if (request()->hasFile('userFile')) 
 
         {
-            $file  = request()->file('userfile');
+            $file  = request()->file('userFile');
             $size  = $file->getClientSize();
             $ext   = $file->guessClientExtension();
 
@@ -54,6 +54,7 @@ class ExcelImportController extends Controller
                         else {
                             $response = ['status'=>404,'msg'=>'Not Found.'];
                         }
+
                         
                     
                     return response()->json($response);
