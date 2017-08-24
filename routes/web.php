@@ -24,6 +24,8 @@ Route::group(['prefix' => 'api', 'middleware' => 'jwt.auth'], function()
     Route::get('authenticate','AuthenticateController@checkValidity');
 
     Route::get('minister/all','MinisterController@all');
+
+    Route::get('minister/active','MinisterController@active');
     
     Route::post('minister/status','MinisterController@changeStatus');
 

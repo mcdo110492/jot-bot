@@ -56,6 +56,13 @@ class MinisterController extends Controller
         return response()->json([ 'data' => $data], 200);
     }
 
+    public function active(){
+        
+        $data = Minister::where('status','=',1)->get()->first();
+
+        return response()->json([ 'data' => $data], 200);
+    }
+
 
     public function update(Request $request, Minister $minister)
     {
