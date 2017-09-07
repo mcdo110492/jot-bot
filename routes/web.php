@@ -50,19 +50,76 @@ Route::group(['prefix' => 'api', 'middleware' => 'jwt.auth'], function()
 
     Route::put('marriage/{id}','MarriageController@update');
 
-
-    Route::resource('price/category','PriceCategoryController');
-
-    Route::post('payment/check/rrNo','PaymentController@checkrrNo');
-
-    Route::resource('payment', 'PaymentController');
-
-    Route::resource('history', 'PaymentHistoryController');
-
-    Route::post('report','ReportController@index');
-
-    Route::resource('profile', 'ProfileController');
     
+    Route::get('item/type/all','ItemTypeController@all');
+
+    Route::get('item/type','ItemTypeController@index');
+
+    Route::post('item/type','ItemTypeController@store');
+
+    Route::get('item/type/{id}','ItemTypeController@show');
+
+    Route::put('item/type/{id}','ItemTypeController@update');
+
+    Route::post('item/type/validate','ItemTypeController@checkValue');
+
+    
+
+    Route::get('item/price/all','ItemTypePriceController@all');
+
+    Route::get('item/price','ItemTypePriceController@index');
+    
+    Route::post('item/price','ItemTypePriceController@store');
+    
+    Route::get('item/price/{id}','ItemTypePriceController@show');
+    
+    Route::put('item/price/{id}','ItemTypePriceController@update');
+
+  
+    
+
+
+    Route::get('group','GroupController@index');
+    
+    Route::post('group','GroupController@store');
+    
+    Route::get('group/{id}','GroupController@show');
+    
+    Route::put('group/{id}','GroupController@update');
+
+    Route::post('group/validate','GroupController@checkValue');
+
+
+
+    Route::get('item/group','ItemGroupController@index');
+
+    Route::get('item/group/price','ItemGroupController@getItemsPos');
+    
+    Route::post('item/group','ItemGroupController@store');
+
+    Route::post('item/group/validate','ItemGroupController@checkValue');
+    
+    Route::delete('item/group/{id}','ItemGroupController@delete');
+
+
+
+    Route::post('invoices','InvoicesController@index');
+
+    Route::post('invoices/status','InvoicesController@changeStatus');
+
+    Route::get('invoices/items/{id}','InvoicesController@getItems');
+
+    Route::get('invoice/collection','InvoicesController@totalCollection');
+
+    Route::post('invoice/validate','InvoicesController@checkValue');
+
+    Route::post('invoice','InvoicesController@store');
+    
+
+    
+    
+
+
 });
 
 

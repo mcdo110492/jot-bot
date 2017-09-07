@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PriestRequest extends FormRequest
+class ItemTypeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class PriestRequest extends FormRequest
     public function rules()
     {
         return [
-            'priest_name'   =>  'required|min:2'
+            'itemName'      =>  'required'
         ];
     }
 }
