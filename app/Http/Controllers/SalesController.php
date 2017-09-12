@@ -5,20 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use App\Invoices;
-use App\InvoiceItems;
-use Validator;
 use Carbon\Carbon;
+use App\Sales;
+use App\SalesItems;
+use Validator;
 
-class InvoicesController extends Controller
+class SalesController extends Controller
 {
+    //
 
     public function __construct(){
         $token = JWTAuth::parseToken()->authenticate();
 
         $this->user = $token->user_id;
     }
-
 
     public function index(Request $request){
         $limit      = $request['limit'];
@@ -27,11 +27,10 @@ class InvoicesController extends Controller
         $order      = strtoupper($request['order']);
         $field      = $request['field'];
         $filter     = $request['filter'];
-        $date       = new \DateTime($request['dateIssued']);
         $dateFilter = Carbon::parse($request['dateIssued'])->toDateString();
 
-        $count = Invoices::where('dateIssued','=',$dateFilter)->count();
-        $data = Invoices::with('users')
+        $count = Sales::where('dateIssued','=',$dateFilter)->count();
+        $data = Sales::with('users')
         ->where(function($q) use ($dateFilter) {
                  $q->where('dateIssued','=',$dateFilter);
         })
@@ -40,31 +39,29 @@ class InvoicesController extends Controller
         })
         ->take($limit)->skip($offset)->orderBy($field, $order)->get();
         
-        return response()->json([ 'status' => 200, 'count'=> $count ,'data' => $data, 'date' => $date ], 200);
+        return response()->json([ 'status' => 200, 'count'=> $count ,'data' => $data], 200);
     }
-
 
     public function totalCollection(){
 
         $now = Carbon::today();
         $where = ['dateIssued' => $now, 'status' => 1];
-        $invoices =  Invoices::where($where)->get();
+        $sales =  Sales::where($where)->get();
         $total  = 0;
 
-        foreach($invoices as $invoice){
-            $items = InvoiceItems::where('invoiceId','=',$invoice->invoiceId)->get();
+        foreach($sales as $sale){
+            $items = SalesItems::where('serviceSalesId','=',$sale->serviceSalesId)->get();
             foreach($items as $item){
-                $total += ($item->qty * $item->currentPrice);
+                $total += ($item->serviceQty * $item->serviceCost);
             }
         }
 
         return response()->json(['collection' => $total, 'date' => $now]);
-
     }
 
     public function checkValue(Request $request){
         
-        $count = Invoices::where('rrNo','=',$request['keyValue'])->count();
+        $count = Sales::where('rrNo','=',$request['keyValue'])->count();
 
         if($count>0){
             $status = 403;
@@ -78,21 +75,21 @@ class InvoicesController extends Controller
         return response()->json(compact('status','message'));
     }
 
-
     public function store(Request $request){
-
+        
         $details            = $request->details;
         $items              = $request->items;
-        $invoiceId          = 0;
+        $serviceSalesId     = 0;
         DB::beginTransaction();
-
+        
         $validateDetails    = Validator::make($details, [
-            'rrNo'          =>  'required|unique:invoices,rrNo',
-            'amountPaid'    =>  'required|numeric'
+            'rrNo'          =>  'required|unique:serviceSales,rrNo',
+            'amountPaid'    =>  'required|numeric',
+            'totalCost'     =>  'required|numeric'
         ]);
-
+        
         if($validateDetails->fails()){
-            DB::rollback();
+             DB::rollback();
             $response   =   ['message'=>'Form Details is not Complete.'];
             return response()->json($response,422);
         }
@@ -101,24 +98,25 @@ class InvoicesController extends Controller
                 'rrNo'          =>      $details['rrNo'],
                 'amountPaid'    =>      $details['amountPaid'],
                 'customer'      =>      $details['customer'],
+                'totalCost'     =>      $details['totalCost'],
                 'dateIssued'    =>      Carbon::now(),
                 'user_id'       =>      $this->user
-
+        
             ];
-
-            $invoice    = Invoices::create($data1);
-            $invoiceId  = $invoice->invoiceId;
+        
+            $sales             = Sales::create($data1);
+            $serviceSalesId    = $sales->serviceSalesId;
         }
-
-
+        
+        
         foreach($items as $item){
-
+        
             $validateItems      =   Validator::make($item, [
-                'itemTypeId'    =>  'required|integer',
-                'itemPrice'     =>  'required|numeric',
-                'qty'           =>  'required|numeric'
+                'serviceId'     =>  'required|integer',
+                'cost'          =>  'required|numeric',
+                'serviceQty'    =>  'required|numeric'
             ]);
-
+        
             if($validateItems->fails()){
                 DB::rollback();
                 $response   =   ['message'=>'Form Items is not Complete.'];
@@ -127,43 +125,56 @@ class InvoicesController extends Controller
             }
             else{
                 $data2 = [
-                    'invoiceId'     =>      $invoiceId,
-                    'itemTypeId'    =>      $item['itemTypeId'],
-                    'groupId'       =>      $item['groupId'],
-                    'currentPrice'  =>      $item['itemPrice'],
-                    'qty'           =>      $item['qty']
+                    'serviceSalesId'     =>      $serviceSalesId,
+                    'serviceId'          =>      $item['serviceId'],
+                    'serviceCost'        =>      $item['cost'],
+                    'serviceQty'         =>      $item['serviceQty']
                 ];
-
-                InvoiceItems::create($data2);
+        
+                SalesItems::create($data2);
             }
         }
-
+        
         DB::commit();
         $status         = 200;
         $message        = 'Data Creation Success';
-
+        
         return response()->json(compact('status','message'));
     }
 
-
     public function changeStatus(Request $request){
-        $invoiceId  = $request['invoiceId'];
-        $status     = $request['status'];
+        $serviceSalesId  = $request['serviceSalesId'];
+        $status          = $request['status'];
 
-        Invoices::where('invoiceId','=',$invoiceId)->update(['status' => $status]);
+        Sales::where('serviceSalesId','=',$serviceSalesId)->update(['status' => $status]);
 
         return response()->json(['status' => 200, 'message' => 'Status has been changed.']);
     }
 
     public function getItems($id){
 
-        $invoiceId         = $id;
-        $total             = 0; 
-        $data              = InvoiceItems::with('itemType','group')->where('invoiceId','=',$invoiceId)->get();
-        foreach($data as $item){
-            $total += ($item->currentPrice * $item->qty);
+        $serviceSalesId    = $id;
+        $data              = SalesItems::with('serviceType')->where('serviceSalesId','=',$serviceSalesId)->get();
+        
+        return response()->json(compact('data'));
+    }
+
+    public function print(Request $request){
+
+        $dateFilter = Carbon::parse($request['dateIssued'])->toDateString();
+        $netCost    = 0;
+
+        $data = Sales::with('users')
+        ->where(function($q) use ($dateFilter) {
+                 $q->where('dateIssued','=',$dateFilter);
+        })
+        ->orderBy('rrNo', 'ASC')->get();
+
+        foreach($data as $sale){
+            $netCost += $sale->totalCost;
         }
         
-        return response()->json(compact('data','total'));
+        return response()->json([ 'status' => 200, 'netCost'=> $netCost ,'data' => $data], 200);
     }
+
 }

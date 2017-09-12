@@ -11,18 +11,17 @@
 |
 */
 
-
-
 Route::post('api/authenticate', 'AuthenticateController@authenticate');
-
-
 
 
 
 Route::group(['prefix' => 'api', 'middleware' => 'jwt.auth'], function()
 {
+    /* Check the Validity of the Token */
     Route::get('authenticate','AuthenticateController@checkValidity');
+     /* End Check the Validity of the Token */
 
+    /* Route of the Minister Features */
     Route::get('minister/all','MinisterController@all');
 
     Route::get('minister/active','MinisterController@active');
@@ -30,18 +29,25 @@ Route::group(['prefix' => 'api', 'middleware' => 'jwt.auth'], function()
     Route::post('minister/status','MinisterController@changeStatus');
 
     Route::resource('minister','MinisterController');
-
-    Route::resource('priest','PriestController');
+    /* End Route of the Minister Features */
     
+    /* Route of the Baptism Feature */
     Route::resource('baptism','BaptismController');
+    /* End of Route of the Baptism Feature */
 
+    /* Route for the Excel File */
     Route::post('excel/import/{source}','ExcelImportController@importExcel');
+    /* End Route for the Excel File */
 
+    /* Route for the Confirmation Feature */
     Route::resource('confirmation','ConfirmationController');
+    /* End Route for the Confirmation Feature */
 
+    /* Route for the Death Feature */
     Route::resource('death','DeathController');
+    /* End Route for the Death Feature */
     
-
+    /* Route for the Marraige Feature */
     Route::get('marriage','MarriageController@index');
 
     Route::get('marriage/{id}','MarriageController@show');
@@ -49,79 +55,96 @@ Route::group(['prefix' => 'api', 'middleware' => 'jwt.auth'], function()
     Route::post('marriage','MarriageController@store');
 
     Route::put('marriage/{id}','MarriageController@update');
+    /* End Route for the Marriage Feature */
 
+    /* Route for the Services Categories Features */
+
+    Route::get('services/categories/all','ServicesCategoriesController@all');
+
+    Route::get('services/categories/{id}','ServicesCategoriesController@show');
+
+    Route::get('services/categories','ServicesCategoriesController@index');
+
+    Route::post('services/categories/validate','ServicesCategoriesController@checkValue');
+
+    Route::post('services/categories','ServicesCategoriesController@store');
+
+    Route::put('services/categories/{id}','ServicesCategoriesController@update');
+
+    /* End Route for the Services Categories Features */
+
+
+    /* Route for the Services Categories Features */
+
+    Route::get('services/type/search','ServiceTypeController@getServices');
+
+    Route::get('services/type/{id}','ServiceTypeController@show');
     
-    Route::get('item/type/all','ItemTypeController@all');
-
-    Route::get('item/type','ItemTypeController@index');
-
-    Route::post('item/type','ItemTypeController@store');
-
-    Route::get('item/type/{id}','ItemTypeController@show');
-
-    Route::put('item/type/{id}','ItemTypeController@update');
-
-    Route::post('item/type/validate','ItemTypeController@checkValue');
-
+    Route::get('services/type','ServiceTypeController@index');
     
-
-    Route::get('item/price/all','ItemTypePriceController@all');
-
-    Route::get('item/price','ItemTypePriceController@index');
+    Route::post('services/type/validate','ServiceTypeController@checkValue');
     
-    Route::post('item/price','ItemTypePriceController@store');
+    Route::post('services/type','ServiceTypeController@store');
     
-    Route::get('item/price/{id}','ItemTypePriceController@show');
+    Route::put('services/type/{id}','ServiceTypeController@update');
     
-    Route::put('item/price/{id}','ItemTypePriceController@update');
+     /* End Route for the Services Categories Features */
 
-  
+
+    /* Route for the Expense Categories Features */
+
+    Route::get('expenses/categories/all','ExpensesCategoriesController@all');
     
-
-
-    Route::get('group','GroupController@index');
+    Route::get('expenses/categories/{id}','ExpensesCategoriesController@show');
     
-    Route::post('group','GroupController@store');
+    Route::get('expenses/categories','ExpensesCategoriesController@index');
     
-    Route::get('group/{id}','GroupController@show');
+    Route::post('expenses/categories/validate','ExpensesCategoriesController@checkValue');
     
-    Route::put('group/{id}','GroupController@update');
-
-    Route::post('group/validate','GroupController@checkValue');
-
-
-
-    Route::get('item/group','ItemGroupController@index');
-
-    Route::get('item/group/price','ItemGroupController@getItemsPos');
+    Route::post('expenses/categories','ExpensesCategoriesController@store');
     
-    Route::post('item/group','ItemGroupController@store');
-
-    Route::post('item/group/validate','ItemGroupController@checkValue');
+    Route::put('expenses/categories/{id}','ExpensesCategoriesController@update');
     
-    Route::delete('item/group/{id}','ItemGroupController@delete');
+    /* End Route for the Expense Categories Features */
 
-
-
-    Route::post('invoices','InvoicesController@index');
-
-    Route::post('invoices/status','InvoicesController@changeStatus');
-
-    Route::get('invoices/items/{id}','InvoicesController@getItems');
-
-    Route::get('invoice/collection','InvoicesController@totalCollection');
-
-    Route::post('invoice/validate','InvoicesController@checkValue');
-
-    Route::post('invoice','InvoicesController@store');
+    /* Route for the Expense Type Features */
     
-
+    Route::get('expenses/type/{id}','ExpensesTypeController@show');
     
+    Route::get('expenses/type','ExpensesTypeController@index');
     
+    Route::post('expenses/type/validate','ExpensesTypeController@checkValue');
+    
+    Route::post('expenses/type','ExpensesTypeController@store');
+    
+    Route::put('expenses/type/{id}','ExpensesTypeController@update');
+    
+    /* End Route for the Expense Type Features */
 
+    /* Route for the Sales/POS Feeatures */
 
+    Route::get('sales/collection','SalesController@totalCollection');
+
+    Route::get('sales/items/{id}','SalesController@getItems');
+
+    Route::post('sales','SalesController@store');
+
+    Route::post('sales/print','SalesController@print');
+
+    Route::post('sales/list','SalesController@index');
+
+    Route::post('sales/validate','SalesController@checkValue');
+
+    Route::post('sales/status','SalesController@changeStatus');
+
+    /* End Route for the Sales/POS Feeatures */
+
+    /* Route for the Sales/Report Feature */
+
+    Route::post('sales/report','SalesReportController@index');
+
+    /* End Route for the Sales/Report Feature */
 });
-
 
 
 

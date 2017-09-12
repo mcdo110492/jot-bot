@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ItemTypePriceRequest extends FormRequest
+class ExpensesCategoriesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,7 @@ class ItemTypePriceRequest extends FormRequest
     public function rules()
     {
         return [
-            'itemTypeId'        =>  'required|integer',
-            'itemPrice'         =>  'required|numeric'
+            'expenseCategoryName'       =>      'required'
         ];
     }
 }

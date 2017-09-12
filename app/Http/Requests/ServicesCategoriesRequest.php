@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ItemGroupRequest extends FormRequest
+class ServicesCategoriesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,7 @@ class ItemGroupRequest extends FormRequest
     public function rules()
     {
         return [
-            'itemPriceId'        =>  'required|integer',
-            'groupId'           =>  'required|integer'
+            'serviceCategoryName'       =>      'required'
         ];
     }
 }

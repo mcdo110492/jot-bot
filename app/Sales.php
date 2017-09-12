@@ -4,21 +4,22 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-
-class Invoices extends Model
+class Sales extends Model
 {
-    protected $table = 'invoices';
-    protected $primaryKey = 'invoiceId';
+    protected $table = 'serviceSales';
+
+    protected $primaryKey = 'serviceSalesId';
 
     protected $fillable = [
+        'serviceSalesId',
         'rrNo',
-        'dateIssued',
         'amountPaid',
+        'totalCost',
+        'dateIssued',
         'status',
         'customer',
         'user_id'
     ];
-
 
     public function users (){
         return $this->belongsTo('App\User','user_id');
