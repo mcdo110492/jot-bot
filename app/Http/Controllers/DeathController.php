@@ -64,7 +64,7 @@ class DeathController extends Controller
      */
     public function show($id)
     {
-        $data    = Death::with('minister')->find($id);
+        $data    = Death::with('minister')->findOrFail($id);
         return response()->json($data, 200);
     }
 

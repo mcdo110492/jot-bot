@@ -11,6 +11,7 @@
 |
 */
 
+
 Route::post('api/authenticate', 'AuthenticateController@authenticate');
 
 
@@ -109,6 +110,8 @@ Route::group(['prefix' => 'api', 'middleware' => 'jwt.auth'], function()
 
     /* Route for the Expense Type Features */
     
+    Route::get('expenses/type/all','ExpensesTypeController@all');
+
     Route::get('expenses/type/{id}','ExpensesTypeController@show');
     
     Route::get('expenses/type','ExpensesTypeController@index');
@@ -144,6 +147,41 @@ Route::group(['prefix' => 'api', 'middleware' => 'jwt.auth'], function()
     Route::post('sales/report','SalesReportController@index');
 
     /* End Route for the Sales/Report Feature */
+
+    /* Route for the Expense/List Feature */
+
+    Route::get('expenses/details/{id}','ExpenseCostController@getDetails');
+
+    Route::post('expenses/list','ExpenseCostController@index');
+
+    Route::post('expenses/save','ExpenseCostController@store');
+
+    Route::post('expenses/print','ExpenseCostController@print');
+
+    Route::put('expenses/update/{id}','ExpenseCostController@update');
+
+    Route::put('expenses/status','ExpenseCostController@changeStatus');
+
+    /* End of Route for the Expense/List Feature */
+
+    /* Route for the Expenses/Report Feature */
+
+     Route::post('expenses/report','ExpensesReportController@index');
+     
+    /* End Route for the Expenses/Report Feature */
+
+    /* Route for the User/Profile Feature */
+
+    Route::post('user/username/validate','UserProfileController@checkUsername');
+
+    Route::post('user/password/validate','UserProfileController@checkPassword');
+
+    Route::post('user/profile/username','UserProfileController@changeUsername');
+
+    Route::post('user/profile/password','UserProfileController@changePassword');
+
+    /* End Route for the User/Profile Feature */
+
 });
 
 

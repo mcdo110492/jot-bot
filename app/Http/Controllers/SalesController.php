@@ -166,7 +166,7 @@ class SalesController extends Controller
 
         $data = Sales::with('users')
         ->where(function($q) use ($dateFilter) {
-                 $q->where('dateIssued','=',$dateFilter);
+                 $q->where('dateIssued','=',$dateFilter)->where('status','=',1);
         })
         ->orderBy('rrNo', 'ASC')->get();
 

@@ -25,6 +25,12 @@ class ExpensesTypeController extends Controller
         return response()->json([ 'status' => 200, 'count' => $count, 'data' => $data], 200);
     }
 
+    public function all(){
+        $data = ExpensesType::all();
+
+        return response()->json($data);
+    }
+
     public function checkValue(Request $request){
         $id    = $request['keyId'];
         $value = $request['keyValue'];

@@ -1,4 +1,12 @@
 
+# September 15, 2017
+
+* Added Expenses Routes ,Model, Controller and Request
+* Added Expenses Report Routes and Controller
+* Added User Profile Settings Routes, Model and Controller
+
+
+
 # September 13, 2017
 
 * Remove ItemType Model and Controller
